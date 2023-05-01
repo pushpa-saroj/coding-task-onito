@@ -1,6 +1,6 @@
 export interface FormData {
   name: string;
-  age: string;
+  dobOrAge: string;
   sex: string;
   mobile: string;
   govIdType: string;
@@ -20,3 +20,5 @@ export interface FormData {
   bloodGroup: string;
   nationality: string;
 }
+
+export type AnyPresentValue = string | number | boolean | object | null;

@@ -1,9 +1,10 @@
-import React from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormData, AnyPresentValue } from "src/interfaces";
 import { schema } from "src/schema";
-import { userRegistrationService } from 'src/services';
+import axios from "axios";
+
+const BASE_URL= 'http://localhost:8080'
 
 const UserRegistrationForm = () => {
   const {
@@ -15,6 +16,17 @@ const UserRegistrationForm = () => {
     resolver: yupResolver(schema),
   });
 
+  const userRegistrationService = (data: FormData) => {
+
+    axios.post(`${BASE_URL}/api/data`, data )
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error(error);
+    })
+  }
+
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const dobOrAge = data.dobOrAge;
     let age;
@@ -25,7 +37,7 @@ const UserRegistrationForm = () => {
       age = new Date().getFullYear() - parseInt(year);
     }
     console.log('Age:', age);
-    userRegistrationService()
+    userRegistrationService(data)
   };
 
   const handleReset = () => {

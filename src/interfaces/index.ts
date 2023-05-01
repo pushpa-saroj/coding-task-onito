@@ -22,3 +22,15 @@ export interface FormData {
 }
 
 export type AnyPresentValue = string | number | boolean | object | null;
+
+export type UserData = {
+  name: string;
+  age: number;
+  sex: string;
+  mobile: string;
+  address: string;
+  govId: string;
+  guardianName: string;
+  guardianType: string;
+  nationality: string;
+};

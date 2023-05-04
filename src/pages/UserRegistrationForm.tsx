@@ -1,10 +1,23 @@
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from 'react-toastify';
 import { FormData, AnyPresentValue } from "src/interfaces";
 import { schema } from "src/schema";
 import axios from "axios";
+import {
+  StyledButton,
+  StyledFormWrapper,
+  StyleFieldset,
+  StyledInput,
+  StyledSelect,
+  StyledLebel,
+  StyledButtonDiv,
+  StyledLegend,
+  StyledFlexInputs,
+  StyledError,
+} from "src/pages/style";
 
-const BASE_URL= 'http://localhost:8080'
+const BASE_URL = "http://localhost:8080";
 
 const UserRegistrationForm = () => {
   const {
@@ -17,27 +30,28 @@ const UserRegistrationForm = () => {
   });
 
   const userRegistrationService = (data: FormData) => {
-
-    axios.post(`${BASE_URL}/api/data`, data )
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch(error => {
-      console.error(error);
-    })
-  }
+    axios
+      .post(`${BASE_URL}/api/data`, data)
+      .then((response) => {
+        toast.success(response.data.message);
+        reset(); // reset the form data
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+  };
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const dobOrAge = data.dobOrAge;
     let age;
-    if (typeof dobOrAge === 'string' && /\d/.test(dobOrAge)) {
+    if (typeof dobOrAge === "string" && /\d/.test(dobOrAge)) {
       age = new Date().getFullYear() - parseInt(dobOrAge);
     } else {
-      const [day, month, year] = (dobOrAge as string).split('/');
+      const [day, month, year] = (dobOrAge as string).split("/");
       age = new Date().getFullYear() - parseInt(year);
     }
-    console.log('Age:', age);
-    userRegistrationService(data)
+    console.log("Age", age);
+    userRegistrationService(data);
   };
 
   const handleReset = () => {
@@ -45,219 +59,283 @@ const UserRegistrationForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <fieldset>
-        <legend>Personal Details</legend>
+    <StyledFormWrapper onSubmit={handleSubmit(onSubmit)}>
+      <StyleFieldset>
+        <StyledLegend>Personal Details</StyledLegend>
         <div>
-          <label htmlFor="name">Name</label>
+          <StyledLebel htmlFor="name">Name </StyledLebel>
           <Controller
             name="name"
             control={control}
+            defaultValue=""
             render={({ field }) => (
-              <input {...field} placeholder="Enter Name" />
+              <StyledInput {...field} placeholder="Enter Name" />
             )}
           />
-          <p>{errors.name?.message}</p>
+          {/* <StyledError>{errors.name?.message}</StyledError> */}
         </div>
         <div>
-          <label htmlFor="age">Age</label>
+          <StyledLebel htmlFor="age">Age </StyledLebel>
           <Controller
-          name="dobOrAge"
-          control={control}
-          render={({ field }) => (
-            <input {...field} placeholder="DD/MM/YYYY or Age in Years" />
+            name="dobOrAge"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput
+                {...field}
+                placeholder="DD/MM/YYYY or Age in Years"
+              />
+            )}
+          />
+          {errors.dobOrAge && (
+            <StyledError>{errors.dobOrAge.message}</StyledError>
           )}
-      />
-         {errors.dobOrAge && <p>{errors.dobOrAge.message}</p>}
         </div>
         <div>
-          <label htmlFor="sex">Sex</label>
+          <StyledLebel htmlFor="sex">Sex </StyledLebel>
           <Controller
             name="sex"
             control={control}
+            defaultValue=""
             render={({ field }) => (
-              <select {...field}>
+              <StyledSelect {...field}>
                 <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+              </StyledSelect>
             )}
           />
-          <p>{errors.sex?.message}</p>
+          <StyledError>{errors.sex?.message}</StyledError>
         </div>
         <div>
-          <label htmlFor="mobile">Mobile</label>
+          <StyledLebel htmlFor="mobile">Mobile </StyledLebel>
           <Controller
             name="mobile"
             control={control}
-            render={({ field }) => <input {...field} placeholder="Enter Mobile"/>}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput {...field} placeholder="Enter Mobile" />
+            )}
           />
-          <p>{errors.mobile?.message}</p>
+          <StyledError>{errors.mobile?.message}</StyledError>
         </div>
-        <div>
-          <label htmlFor="govIdType">Govt Issued Id</label>
+        <StyledFlexInputs>
+          <StyledLebel htmlFor="govIdType">Govt Issued Id </StyledLebel>
           <div>
             <Controller
               name="govIdType"
               control={control}
+              defaultValue=""
               render={({ field }) => (
-                <select {...field}>
+                <StyledSelect {...field}>
                   <option value="">Select</option>
                   <option value="Aadhar">Aadhar</option>
                   <option value="PAN">PAN</option>
-                </select>
+                </StyledSelect>
               )}
             />
             <Controller
               name="govId"
               control={control}
-              render={({ field }) => <input {...field} placeholder="Enter Govt ID"/>}
+              defaultValue=""
+              render={({ field }) => (
+                <StyledInput {...field} placeholder="Enter Govt ID" />
+              )}
             />
+            <StyledError>{errors.govId?.message}</StyledError>
           </div>
-          <p>{errors.govId?.message}</p>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Contact Details</legend>
-        <div>
-          <label htmlFor="guardianType">Guardian Details</label>
-          <div>
+        </StyledFlexInputs>
+      </StyleFieldset>
+      <StyleFieldset>
+        <StyledLegend>Contact Details</StyledLegend>
+        <StyledFlexInputs>
+          <StyledLebel htmlFor="guardianType">Guardian Details </StyledLebel>
+          <div className="flex-both-input">
             <Controller
               name="guardianType"
               control={control}
+              defaultValue=""
               render={({ field }) => (
-                <select {...field}>
+                <StyledSelect {...field}>
                   <option value="">Select</option>
                   <option value="Father">Father</option>
                   <option value="Mother">Mother</option>
                   <option value="Spouse">Spouse</option>
                   <option value="Other">Other</option>
-                </select>
+                </StyledSelect>
               )}
             />
             <Controller
               name="guardianName"
               control={control}
-              render={({ field }) => <input {...field} placeholder="Enter Guardia Name"/>}
+              defaultValue=""
+              render={({ field }) => (
+                <StyledInput {...field} placeholder="Enter Guardia Name" />
+              )}
             />
+            <StyledError>{errors.guardianName?.message}</StyledError>
           </div>
-          <p>{errors.guardianName?.message}</p>
-        </div>
+        </StyledFlexInputs>
         <div>
-          <label htmlFor="email">Email</label>
+          <StyledLebel htmlFor="email">Email </StyledLebel>
           <Controller
             name="email"
             control={control}
-            render={({ field }) => <input {...field} placeholder="Enter Email" />}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput {...field} placeholder="Enter Email" />
+            )}
           />
-          <p>{errors.email?.message}</p>
+          <StyledError>{errors.email?.message}</StyledError>
         </div>
         <div>
-          <label htmlFor="emergencyContact">Emergency Contact Number</label>
+          <StyledLebel htmlFor="emergencyContact">
+            Emergency Contact Number{" "}
+          </StyledLebel>
           <Controller
             name="emergencyContact"
             control={control}
-            render={({ field }) => <input {...field} placeholder="Enter Emergency No" />}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput {...field} placeholder="Enter Emergency No" />
+            )}
           />
-          <p>{errors.emergencyContact?.message}</p>
+          <StyledError>{errors.emergencyContact?.message}</StyledError>
         </div>
-      </fieldset>
-      <fieldset>
-        <legend>Address Details</legend>
+      </StyleFieldset>
+      <StyleFieldset>
+        <StyledLegend>Address Details</StyledLegend>
         <div>
-          <label htmlFor="address">Address</label>
+          <StyledLebel htmlFor="address">Address </StyledLebel>
           <Controller
             name="address"
             control={control}
-            render={({ field }) => <input {...field} placeholder="Enter Address"/>}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput {...field} placeholder="Enter Address" />
+            )}
           />
         </div>
         <div>
-          <label htmlFor="state">State</label>
+          <StyledLebel htmlFor="state">State </StyledLebel>
           <Controller
             name="state"
             control={control}
-            render={({ field }) => <input {...field} placeholder="Enter State"/>}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput {...field} placeholder="Enter State" />
+            )}
           />
         </div>
         <div>
-          <label htmlFor="city">City</label>
+          <StyledLebel htmlFor="city">City </StyledLebel>
           <Controller
             name="city"
             control={control}
-            render={({ field }) => <input {...field}placeholder="Enter citytown/village" />}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledSelect {...field}>
+                <option value="">Select</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Pune">Pune</option>
+                <option value="Jaipur">Jaipur</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Lucknow">Lucknow</option>
+                <option value="Kanpur">Kanpur</option>
+              </StyledSelect>
+            )}
           />
         </div>
         <div>
-          <label htmlFor="country">Country</label>
+          <StyledLebel htmlFor="country">Country </StyledLebel>
           <Controller
             name="country"
             control={control}
-            render={({ field }) => <input {...field} />}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledSelect {...field}>
+                <option value="">Select</option>
+                <option value="india">INDIA</option>
+              </StyledSelect>
+            )}
           />
         </div>
         <div>
-          <label htmlFor="pincode">Pincode</label>
+          <StyledLebel htmlFor="pincode">Pincode </StyledLebel>
           <Controller
             name="pincode"
             control={control}
-            render={({ field }) => <input {...field} placeholder="Enter pincode"/>}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput {...field} placeholder="Enter pincode" />
+            )}
           />
-          <p>{errors.pincode?.message}</p>
+          <StyledError>{errors.pincode?.message}</StyledError>
         </div>
-      </fieldset>
-      <fieldset>
-        <legend>Other Details</legend>
+      </StyleFieldset>
+      <StyleFieldset>
+        <StyledLegend>Other Details</StyledLegend>
         <div>
-          <label htmlFor="occupation">Occupation</label>
+          <StyledLebel htmlFor="occupation">Occupation </StyledLebel>
           <Controller
             name="occupation"
             control={control}
-            render={({ field }) => <input {...field} placeholder="Enter occupation" />}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledInput {...field} placeholder="Enter occupation" />
+            )}
           />
         </div>
         <div>
-          <label htmlFor="religion">Religion</label>
+          <StyledLebel htmlFor="religion">Religion </StyledLebel>
           <Controller
             name="religion"
             control={control}
+            defaultValue=""
             render={({ field }) => (
-              <select {...field}>
+              <StyledSelect {...field}>
                 <option value="">Select</option>
                 <option value="Hindu">Hindu</option>
                 <option value="Muslim">Muslim</option>
                 <option value="Christian">Christian</option>
                 <option value="Sikh">Sikh</option>
                 <option value="Other">Other</option>
-              </select>
+              </StyledSelect>
             )}
           />
         </div>
         <div>
-          <label htmlFor="maritalStatus">Marital Status</label>
+          <StyledLebel htmlFor="maritalStatus">Marital Status </StyledLebel>
           <Controller
             name="maritalStatus"
             control={control}
+            defaultValue=""
             render={({ field }) => (
-              <select {...field}>
+              <StyledSelect {...field}>
                 <option value="">Select</option>
                 <option value="Single">Single</option>
                 <option value="Married">Married</option>
                 <option value="Widowed">Widowed</option>
                 <option value="Divorced">Divorced</option>
                 <option value="Separated">Separated</option>
-              </select>
+              </StyledSelect>
             )}
           />
         </div>
         <div>
-          <label htmlFor="bloodGroup">Blood Group</label>
+          <StyledLebel htmlFor="bloodGroup">Blood Group </StyledLebel>
           <Controller
             name="bloodGroup"
             control={control}
+            defaultValue=""
             render={({ field }) => (
-              <select {...field}>
+              <StyledSelect {...field}>
                 <option value="">Select</option>
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -267,26 +345,34 @@ const UserRegistrationForm = () => {
                 <option value="O-">O-</option>
                 <option value="AB+">AB+</option>
                 <option value="AB-">AB-</option>
-              </select>
+              </StyledSelect>
             )}
           />
         </div>
         <div>
-          <label htmlFor="nationality">Nationality</label>
+          <StyledLebel htmlFor="nationality">Nationality </StyledLebel>
           <Controller
             name="nationality"
             control={control}
-            render={({ field }) => <input {...field} />}
+            defaultValue=""
+            render={({ field }) => <StyledInput {...field} />}
           />
         </div>
-      </fieldset>
-      <div>
-        <button type="submit">Save</button>
-        <button type="button" onClick={handleReset}>
+      </StyleFieldset>
+      <StyledButtonDiv>
+        <StyledButton type="submit" color="white" backgroundColor="green">
+          Submit
+        </StyledButton>
+        <StyledButton
+          type="button"
+          color="red"
+          backgroundColor="white"
+          onClick={handleReset}
+        >
           Cancel
-        </button>
-      </div>
-    </form>
+        </StyledButton>
+      </StyledButtonDiv>
+    </StyledFormWrapper>
   );
 };
 

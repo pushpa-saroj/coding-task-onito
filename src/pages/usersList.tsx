@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
+import { toast } from 'react-toastify';
 import { UserData } from 'src/interfaces'
 import axios from "axios";
 import { SearchBox } from "src/components/searchBox";
@@ -59,10 +60,11 @@ const UsersList = () =>{
       }));
 
       setUsers(mappedData);      
+      toast.success('Users Fetch Successfully')
       setIsLoading(false)
     })
     .catch(error => {
-      console.error(error);
+      toast.error(error);
       setIsLoading(false)
     })
   }

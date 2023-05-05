@@ -16,6 +16,7 @@ import {
   StyledFlexInputs,
   StyledError,
 } from "src/pages/style";
+import { useState } from "react";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -28,11 +29,12 @@ const UserRegistrationForm = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
+  const [formatAge, SetFormatAge] = useState<string | number>()
 
   const userRegistrationService = (data: FormData) => {
     const {
       name,
-      dobOrAge: age,
+      dobOrAge,
       sex,
       mobile,
       govIdType: govt_id_type,
@@ -52,6 +54,8 @@ const UserRegistrationForm = () => {
       bloodGroup: blood_group,
       nationality
     } = data;
+  
+    const age = formatAge
   
     const formatData = {
       name,
@@ -90,14 +94,23 @@ const UserRegistrationForm = () => {
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const dobOrAge = data.dobOrAge;
+    console.log('dobOrAge',dobOrAge)
     let age;
     if (typeof dobOrAge === "string" && /\d/.test(dobOrAge)) {
-      age = new Date().getFullYear() - parseInt(dobOrAge);
+      const [day, month, year] = dobOrAge.split("/");
+      const birthDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      const currentDate = new Date();
+      age = currentDate.getFullYear() - birthDate.getFullYear();
+      const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      SetFormatAge(age)
+      console.log('Age',age)
     } else {
-      const [day, month, year] = (dobOrAge as string).split("/");
-      age = new Date().getFullYear() - parseInt(year);
+      SetFormatAge(dobOrAge)
     }
-    console.log("Age", age);
+    
     userRegistrationService(data);
   };
 

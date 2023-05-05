@@ -30,14 +30,61 @@ const UserRegistrationForm = () => {
   });
 
   const userRegistrationService = (data: FormData) => {
+    const {
+      name,
+      dobOrAge: age,
+      sex,
+      mobile,
+      govIdType: govt_id_type,
+      govId: govt_id_no,
+      guardianType: guardian_type,
+      guardianName: guardian_name,
+      email,
+      emergencyContact: emergency_contact,
+      address,
+      state,
+      city,
+      country,
+      pincode,
+      occupation,
+      religion,
+      maritalStatus: marital_status,
+      bloodGroup: blood_group,
+      nationality
+    } = data;
+  
+    const formatData = {
+      name,
+      age,
+      sex,
+      mobile,
+      govt_id_type,
+      govt_id_no,
+      guardian_type,
+      guardian_name,
+      email,
+      emergency_contact,
+      address,
+      state,
+      city,
+      country,
+      pincode,
+      occupation,
+      religion,
+      marital_status,
+      blood_group,
+      nationality
+    };
+
     axios
-      .post(`${BASE_URL}/api/data`, data)
+      .post(`${BASE_URL}/api/data`, formatData)
       .then((response) => {
         toast.success(response.data.message);
         reset(); // reset the form data
       })
       .catch((error) => {
-        toast.error(error);
+        console.log(error.data.message        )
+        toast.error(error.data.message);
       });
   };
 
